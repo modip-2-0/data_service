@@ -1,24 +1,42 @@
 from fastapi import APIRouter
-
 from models.compound import CompoundCreate, Compound
 from crud.compound import create_compound
 from api.dependencies import AsyncMongoDB
 
-router = APIRouter(prefix="/compound", tags=['compounds'])
+router = APIRouter(prefix="/compound", tags=['Compounds'])
 
 @router.get("/")
 async def list_compounds(db: AsyncMongoDB) -> list[Compound]:
-    # response = list(db.compound.find({}))
-    # for item in response:
-    #     item["_id"] = str(item["_id"])
-    # return response
+    """
+    Retrieve all chemical compounds from the database.
+    
+    Args:
+        db (AsyncMongoDB): Database connection instance injected by FastAPI
+        
+    Returns:
+        list[Compound]: List of all compound documents in the database
+        
+    Note:
+        Uses async iteration for better memory efficiency with large datasets
+    """
     response = []
-    async for doc in db.compound.find({}): # Itera asíncronamente
-        #doc["_id"] = str(doc["_id"]) # Convertir ObjectId a string
-        response.append(doc) # Conversión explícita a Pydantic Model
+    async for doc in db.compound.find({}):
+        response.append(doc)
     return response
 
 @router.post("/insert", response_model=Compound)
 async def insert_compound(db: AsyncMongoDB, compound: CompoundCreate) -> Compound:
-    return await create_compound(db,compound)    
+    """
+    Create a new compound document in the database.
     
+    Args:
+        db (AsyncMongoDB): Database connection instance
+        compound (CompoundCreate): Compound data to be inserted
+        
+    Returns:
+        Compound: Created compound document with MongoDB ID
+        
+    Raises:
+        HTTPException: If database operation fails
+    """
+    return await create_compound(db, compound)
