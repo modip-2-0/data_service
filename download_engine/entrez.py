@@ -27,9 +27,9 @@ async def search_bioassays(query: str) -> list[int]:
         requests.RequestException: If the API request fails
         KeyError: If the response JSON structure is invalid
     """
-    url = f"{BASE_URL}/?db=pcassay&term={query}[PTN]&retmode=json"
+    url = f"{BASE_URL}/?db=pcassay&term=\"{query}\"&retmode=json"
     response = requests.get(url)
     response.raise_for_status()
     
-    aid_list = response.json()["esearchresult"]["idlist"]
+    aid_list = response.json()["esearchresult"]["idlist"]    
     return [int(aid) for aid in aid_list]

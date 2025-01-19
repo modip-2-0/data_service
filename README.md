@@ -32,26 +32,55 @@ A FastAPI-based service for downloading and managing bioassay and compound data 
 
 ## Setup
 
-1. Install MongoDB locally
-2. Configure MongoDB connection in `core/db.py`
-3. Install dependencies
-4. Run FastAPI application
+1. Install [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux/)
 
-## Dependencies
+2. Clone the repository
 
-- FastAPI
-- Motor (async MongoDB driver)
-- Pydantic
-- Requests
+    ```bash
+    git clone https://github.com/modip-2-0/data_service.git
+    cd data_service
+    ```
 
+3. Start the Service
 
+    ```bash
+    docker compose up | grep -v mongo
+    ```
 
-## Usage
+   -  This command will start the services while filtering out MongoDB logs for a cleaner output.
+   
+   
+   
 
-Start the server:
+4. Access the FastAPI Documentation
+    - Open your web browser and go to http://0.0.0.0:8000/docs to view the interactive API documentation.
+    - Testing Endpoints:
+        - Select the desired endpoint.
+        - Click "Try it out".
+        - If it's a POST request, provide the necessary request body in JSON format.
+        - Click "Execute" to send the request and view the response.
 
-```bash
-uvicorn api.main:app --reload
-```
+5. Direct Database Access (Not Recommended):
+    - Important:  It is generally recommended to use the provided API for data interaction. Direct database queries bypass application logic and can potentially lead to data inconsistencies or security vulnerabilities.
+    - If you want to access the database directly, open a new terminal and execute the following command:
+      
+    ```bash
+    docker exec -it data_service-mongodb-1 mongosh
+    ```
+    - This command launches the MongoDB shell (mongosh) within the running MongoDB container.
+    - Basic MongoDB Commands: Once in the shell, you can execute commands to interact with the database. Here are a few examples:
+    ```javascript
+    > use modip       // Switch to the 'modip' database.
+    > show collections // List available collections.
+    > db.bioassays.find() // Retrieve documents from the 'bioassays' collection.
+    > db.compounds.find() // Retrieve documents from the 'compounds' collection.
+    ```
+6. Stop the Service
+   - Press `Ctrl`+`C` in your terminal to stop the running containers.
 
-Access API documentation at: `http://localhost:8000/docs`
+7. Remove the Service
+   ```bash
+   docker compose down
+   ```
+   
+   - This command will stop and remove the containers, networks, and volumes created by `docker compose up`.

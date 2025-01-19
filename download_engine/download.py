@@ -28,7 +28,7 @@ async def download(db: AsyncIOMotorClient, query: str) -> None:
     """
     aids_list = await search_bioassays(query)
 
-    for aid in aids_list:
+    for aid in aids_list[:5]:
         try:            
             bioassay = await get_bioassay(db, aid)
         except:
