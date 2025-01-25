@@ -1,10 +1,17 @@
 services:
+  
   api:
     build: .
+    stdin_open: true
+    tty: true
     ports:
-      - "8000:8000"
-    depends_on:
+      - "8000:8000"    
+    depends_on:      
       - mongodb
+    volumes:
+      - .:/app
+    entrypoint: ["/app/start.sh"]   
+    
       
   mongodb:
     image: mongo:latest

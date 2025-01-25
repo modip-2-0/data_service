@@ -12,6 +12,7 @@ from download_engine.entrez import search_bioassays
 from download_engine.bioassay import download_bioassay
 from download_engine.compound import download_compound
 
+import logging
 
 async def download(db: AsyncIOMotorClient, query: str) -> None:
     """
@@ -28,6 +29,9 @@ async def download(db: AsyncIOMotorClient, query: str) -> None:
     """
     aids_list = await search_bioassays(query)
 
+    print(f"Found {len(aids_list)} bioassays matching the query:")
+    print(aids_list)    
+  
     for aid in aids_list[:5]:
         try:            
             bioassay = await get_bioassay(db, aid)

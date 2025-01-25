@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 from models.bioassay import BioassayCreate, Bioassay
-from crud.bioassay import create_bioassay
+from crud.bioassay import create_bioassay, get_bioassay
 from api.dependencies import AsyncMongoDB
 
 router = APIRouter(prefix="/bioassay", tags=['Bioassays'])
 
 @router.get("/")
-async def list_bioassays(db: AsyncMongoDB) -> list[Bioassay]:
+async def list_bioassays(db: AsyncMongoDB) -> list[int]:
     """
     Retrieve all bioassays from the database.
     
@@ -14,14 +14,14 @@ async def list_bioassays(db: AsyncMongoDB) -> list[Bioassay]:
         db (AsyncMongoDB): Database connection instance injected by FastAPI
         
     Returns:
-        list[Bioassay]: List of all bioassay documents in the database
+        list[int]: List of all bioassay id documents in the database
         
     Note:
         Uses async iteration for better memory efficiency with large datasets
     """
     response = []
     async for doc in db.bioassay.find({}):
-        response.append(doc)
+        response.append(doc["aid"])
     return response
 
 @router.post("/insert", response_model=Bioassay)
@@ -39,5 +39,23 @@ async def insert_bioassay(db: AsyncMongoDB, bioassay: BioassayCreate) -> Bioassa
     Raises:
         HTTPException: If database operation fails
     """
-    return await create_bioassay(db, bioassay)   
+    return await create_bioassay(db, bioassay) 
+
+
+@router.get("/get/{aid}", response_model=Bioassay)
+async def get(db: AsyncMongoDB, aid: int) -> Bioassay:
+    """
+    Retrieve a bioassay document by its ID.
+    
+    Args:
+        aid (int): The ID of the bioassay to retrieve
+        db (AsyncMongoDB): Database connection instance
+        
+    Returns:
+        Bioassay: The bioassay document with the specified ID
+        
+    Raises:
+        HTTPException: If the bioassay is not found
+    """
+    return await get_bioassay(db, aid)
     

@@ -31,6 +31,7 @@ async def connect_and_init_db() -> None:
     global db_client
     try:
         db_client = AsyncIOMotorClient("mongodb://mongodb:27017")
+        #db_client = AsyncIOMotorClient("mongodb://localhost:27017")
         logger.info('Connected to MongoDB successfully')
     except Exception as e:
         logger.exception('Failed to connect to MongoDB: %s', e)

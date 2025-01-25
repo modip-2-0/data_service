@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+#import uvicron
+
 from core.db import connect_and_init_db, close_db_connect
 from api.main import api_router
 
