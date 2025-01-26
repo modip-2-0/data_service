@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from models.bioassay import BioassayCreate, Bioassay
-from crud.bioassay import create_bioassay, get_bioassay
+from crud.bioassay import create_bioassay, get_bioassay, delete_bioassays
 from api.dependencies import AsyncMongoDB
 
 router = APIRouter(prefix="/bioassay", tags=['Bioassays'])
@@ -58,4 +58,15 @@ async def get(db: AsyncMongoDB, aid: int) -> Bioassay:
         HTTPException: If the bioassay is not found
     """
     return await get_bioassay(db, aid)
+
+
+@router.delete("/drop")
+async def drop_bioassays(db: AsyncMongoDB):
+    """
+    Delete all bioassay documents from the database.
+    
+    Args:
+        db (AsyncMongoDB): Database connection instance   
+    """
+    return await delete_bioassays(db)
     

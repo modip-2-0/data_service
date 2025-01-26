@@ -57,3 +57,16 @@ async def get_bioassay(db: AsyncIOMotorClient, aid: int) -> Bioassay:
         raise HTTPException(status_code=500, detail="Database error")
 
 
+async def delete_bioassays(db: AsyncIOMotorClient):
+    """
+    Deletes all bioassay documents from the database.
+
+    Args:
+        db (AsyncIOMotorClient): MongoDB client instance    
+    """
+    try:
+        result = await db[DB_COLLECTION].delete_many({})
+        logging.info(f'Deleted {result.deleted_count} bioassays.')        
+    except Exception as e:
+        logging.error(f"Error deleting bioassays: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete bioassays")

@@ -38,6 +38,24 @@ class ApiClient:
         url = f"{self.base_url}/compound/get/{cid}"
         response = requests.get(url)
         return response.json()
+    
+    def drop_bioassays(self):
+        """Drop all bioassays"""
+        url = f"{self.base_url}/bioassay/drop"
+        response = requests.delete(url)
+        return response.json()
+    
+    def drop_compounds(self):
+        """Drop all compounds"""
+        url = f"{self.base_url}/compound/drop"
+        response = requests.delete(url)
+        return response.json()
+    
+    def drop_db(self):
+        """Drop all bioassays and compounds"""
+        bioassays_result = self.drop_bioassays()
+        compounds_result = self.drop_compounds()
+        return {"bioassays": bioassays_result, "compounds": compounds_result}
 
 def main():
     client = ApiClient()
@@ -68,6 +86,15 @@ def main():
             result = client.get_compound(cid)
             print(json.dumps(result, indent=2))
         
+        elif command == "drop bioassays":
+            result = client.drop_bioassays()            
+        
+        elif command == "drop compounds":
+            result = client.drop_compounds()            
+        
+        elif command == "drop db":
+            result = client.drop_db()            
+
         elif command == "help":
             print(Fore.CYAN + "Available commands:" + Style.RESET_ALL)
             print(Fore.CYAN + "  query <query_text>  - Download data with the specified query" + Style.RESET_ALL)
@@ -75,6 +102,9 @@ def main():
             print(Fore.CYAN + "  list compounds      - List all compounds" + Style.RESET_ALL)
             print(Fore.CYAN + "  bioassay <aid>      - Get a specific bioassay by its ID" + Style.RESET_ALL)
             print(Fore.CYAN + "  compound <cid>      - Get a specific compound by its ID" + Style.RESET_ALL)
+            print(Fore.CYAN + "  drop bioassays      - Drop all bioassays" + Style.RESET_ALL)
+            print(Fore.CYAN + "  drop compounds      - Drop all compounds" + Style.RESET_ALL)
+            print(Fore.CYAN + "  drop db             - Drop all bioassays and compounds" + Style.RESET_ALL)
             print(Fore.CYAN + "  exit                - Exit the client" + Style.RESET_ALL)
         
         elif command == "exit":

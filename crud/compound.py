@@ -51,3 +51,18 @@ async def get_compound(db: AsyncIOMotorClient, cid: int) -> Compound:
             detail=f"No compound found for CID: {cid}"
         )
     return doc
+
+
+async def delete_compounds(db: AsyncIOMotorClient):
+    """
+    Deletes all compounds documents from the database.
+
+    Args:
+        db (AsyncIOMotorClient): MongoDB client instance    
+    """
+    try:
+        result = await db[DB_COLLECTION].delete_many({})
+        logging.info(f'Deleted {result.deleted_count} compounds.')        
+    except Exception as e:
+        logging.error(f"Error deleting compounds: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete compounds")

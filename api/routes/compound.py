@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from models.compound import CompoundCreate, Compound
-from crud.compound import create_compound, get_compound
+from crud.compound import create_compound, get_compound, delete_compounds
 from api.dependencies import AsyncMongoDB
 
 router = APIRouter(prefix="/compound", tags=['Compounds'])
@@ -58,3 +58,15 @@ async def get(db: AsyncMongoDB, cid: int) -> Compound:
         HTTPException: If compound is not found
     """
     return await get_compound(db, cid)
+
+
+@router.delete("/drop")
+async def drop_compounds(db: AsyncMongoDB):
+    """
+    Delete all compound documents from the database.
+    
+    Args:
+        db (AsyncMongoDB): Database connection instance       
+    """
+    return await delete_compounds(db)
+    
