@@ -72,4 +72,4 @@ A FastAPI-based service for downloading and managing bioassay and compound data 
 
 7. Remove the Service
    ```bash
-   docker-compose down
+   docker compose down
