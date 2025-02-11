@@ -2,6 +2,12 @@
 
 A FastAPI-based service for downloading and managing bioassay and compound data from PubChem.
 
+## Collaborators
+
+- ScM Dany Naranjo Feliciano
+- ScM Romel Calero Ramos
+- BEng Sandy Chávez Rodríguez
+
 ## Features
 
 - Download bioassays and compounds from PubChem based on search queries
