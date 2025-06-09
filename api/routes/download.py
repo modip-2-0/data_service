@@ -20,7 +20,7 @@ async def download_query(db: AsyncMongoDB, query: str):
         HTTPException: If download process fails
     """
     try:
-        await download(db, query)        
+        return await download(db, query)        
     except Exception as e:
         raise HTTPException(
             status_code=500,

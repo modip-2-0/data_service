@@ -4,3 +4,8 @@ pydantic
 requests
 uvicorn
 colorama
+aiohttp
+python-multipart
+python-jose
+passlib
+bcrypt

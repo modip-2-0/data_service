@@ -47,6 +47,8 @@ async def download(db: AsyncIOMotorClient, query: str) -> None:
                 except:
                     
                     compound = await download_compound(db, cid)
+                    
+    return aids_list
         
         
             
