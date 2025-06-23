@@ -8,13 +8,12 @@ based on search queries. It manages the download process and database storage.
 from core.db import AsyncIOMotorClient
 from crud.bioassay import get_bioassay
 from crud.compound import get_compound
-from download_engine.entrez import search_bioassays
 from download_engine.bioassay import download_bioassay
 from download_engine.compound import download_compound
 
-import logging
 
-async def download(db: AsyncIOMotorClient, query: str) -> None:
+
+async def download(db: AsyncIOMotorClient, aids: str) -> None:
     """
     Downloads bioassays and their associated compounds based on a search query.
 
@@ -27,12 +26,9 @@ async def download(db: AsyncIOMotorClient, query: str) -> None:
     2. Downloads each bioassay if not already in database
     3. Downloads the compounds associated with each bioassay
     """
-    aids_list = await search_bioassays(query)
-
-    print(f"Found {len(aids_list)} bioassays matching the query:")
-    print(aids_list)    
+   
   
-    for aid in aids_list[:5]:
+    for aid in aids[:5]:
         try:            
             bioassay = await get_bioassay(db, aid)
         except:
@@ -48,7 +44,7 @@ async def download(db: AsyncIOMotorClient, query: str) -> None:
                     
                     compound = await download_compound(db, cid)
                     
-    return aids_list
+
         
         
             

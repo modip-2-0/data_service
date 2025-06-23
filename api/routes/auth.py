@@ -12,7 +12,7 @@ from api.dependencies import AsyncMongoDB
 
 ALGORITHM = "HS256"
 SECRET = "1652e68e6e5c4c9d21c6c38a87c143ea3f0b865fe318fae0374de808f5f0016f"
-ACCESS_TOKEN_DURATION = 10
+ACCESS_TOKEN_DURATION = 60
 
 
 router = APIRouter()
@@ -67,14 +67,15 @@ async def login(db: AsyncMongoDB, credentials: list = Body(...)):
 
     try:
         
-        user: UserDB = await get_userDB(db, username)  
+        user: UserDB = await get_userDB(db, username)            
         
         hashed_password = user.password.encode('utf-8')
-        if not bcrypt.checkpw(password.encode(), hashed_password):       
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Password do not match."
-            )   
+        if not bcrypt.checkpw(password.encode(), hashed_password): 
+            return JSONResponse(
+            status_code=500,
+            content={"message": "Password do not match."}
+        )        
+ 
         
         access_token = {
             "sub": username,
@@ -84,9 +85,17 @@ async def login(db: AsyncMongoDB, credentials: list = Body(...)):
         return {"access_token": jwt.encode(access_token, SECRET, algorithm=ALGORITHM), "token_type":"bearer"}  
 
     except HTTPException:
-        raise  # Re-lanza las excepciones HTTP ya manejadas
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"User {username} does not exist, please register."}
+        )   
     except Exception as e:        
         return JSONResponse(
             status_code=500,
             content={"message": f"Error interno del servidor: {str(e)}"}
         )
+
+
+@router.get("/user/{username}", response_model=UserOut)
+async def get(db: AsyncMongoDB, username: str) -> UserOut:
+    return await get_user(db, username)      

@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from models.mongo import MongoModel
 
 
-class BioassayDataIN(BaseModel):
+class BioassayDataIn(BaseModel):
     """
     Pydantic model for creating a new bioassay data entry.
     """
@@ -21,7 +21,7 @@ class BioassayDataIN(BaseModel):
     rna_i: str = Field(..., description="RNA interference information associated with the bioassay.")
 
 
-class BioassayDataDB(MongoModel, BioassayDataIN): 
+class BioassayDataDB(MongoModel, BioassayDataIn): 
     """
     Pydantic model representing a bioassay data entry document in MongoDB.
     Inherits all fields from CompoundIN and adds MongoDB-specific fields.

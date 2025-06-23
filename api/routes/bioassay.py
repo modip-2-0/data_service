@@ -1,7 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from models.bioassay import BioassayCreate, Bioassay
 from crud.bioassay import create_bioassay, get_bioassay, delete_bioassays
 from api.dependencies import AsyncMongoDB
+
+from crud.query import get_queries_by_user
 
 router = APIRouter(prefix="/bioassay", tags=['Bioassays'])
 
@@ -69,4 +71,46 @@ async def drop_bioassays(db: AsyncMongoDB):
         db (AsyncMongoDB): Database connection instance   
     """
     return await delete_bioassays(db)
+
+
+
+@router.get(
+    "/user/{username}",
+    response_model=list[Bioassay],
+    summary="Get all unique bioassays for a user"
+)
+async def get_user_assays(db: AsyncMongoDB, username: str):
+    """
+    Retrieves all unique bioassay documents associated with a user's queries.
+    
+    Steps:
+    1. Get all queries for the user
+    2. Extract unique assay IDs from all queries
+    3. Fetch corresponding assay documents
+    
+    Args:
+        db: MongoDB client
+        username: User to filter assays
+    
+    Returns:
+        List of unique BioAssayDB documents
+    """
+    try:
+        # Paso 1: Obtener todas las queries del usuario
+        queries = await get_queries_by_user(db, username)
+        
+        # Paso 2: Consolidar IDs únicos de ensayos
+        assay_ids = set()
+        for query in queries:
+            assay_ids.update(query.get("assays", []))
+        
+        if not assay_ids:
+            return []
+        
+        # Paso 3: Obtener documentos de ensayos
+        cursor = db["bioassay"].find({"aid": {"$in": list(assay_ids)}})
+        return await cursor.to_list(length=None)
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to retrieve assays")
     
