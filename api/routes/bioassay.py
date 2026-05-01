@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from models.bioassay import BioassayCreate, Bioassay
+from models.bioassay import BioassayIn, BioassayDB
 from crud.bioassay import create_bioassay, get_bioassay, delete_bioassays
 from api.dependencies import AsyncMongoDB
 
@@ -26,8 +26,8 @@ async def list_bioassays(db: AsyncMongoDB) -> list[int]:
         response.append(doc["aid"])
     return response
 
-@router.post("/insert", response_model=Bioassay)
-async def insert_bioassay(db: AsyncMongoDB, bioassay: BioassayCreate) -> Bioassay:
+@router.post("/insert", response_model=BioassayDB)
+async def insert_bioassay(db: AsyncMongoDB, bioassay: BioassayIn) -> BioassayDB:
     """
     Create a new bioassay document in the database.
     
@@ -44,8 +44,8 @@ async def insert_bioassay(db: AsyncMongoDB, bioassay: BioassayCreate) -> Bioassa
     return await create_bioassay(db, bioassay) 
 
 
-@router.get("/get/{aid}", response_model=Bioassay)
-async def get(db: AsyncMongoDB, aid: int) -> Bioassay:
+@router.get("/get/{aid}", response_model=BioassayDB)
+async def get(db: AsyncMongoDB, aid: int) -> BioassayDB:
     """
     Retrieve a bioassay document by its ID.
     
@@ -76,7 +76,7 @@ async def drop_bioassays(db: AsyncMongoDB):
 
 @router.get(
     "/user/{username}",
-    response_model=list[Bioassay],
+    response_model=list[BioassayDB],
     summary="Get all unique bioassays for a user"
 )
 async def get_user_assays(db: AsyncMongoDB, username: str):

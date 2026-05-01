@@ -1,36 +1,52 @@
 from fastapi import HTTPException
+from typing import Dict, Any
 from core.db import AsyncIOMotorClient
-from models.compound import Compound, CompoundCreate
+from models.compound import CompoundIn, CompoundDB
 import logging
 
 # Constants should be at module level
 DB_COLLECTION = "compound"
 
-async def create_compound(db: AsyncIOMotorClient, compound: CompoundCreate) -> Compound:
-    """
-    Creates a new compound document in the database.
+# async def create_compound(db: AsyncIOMotorClient, compound: CompoundCreate) -> Compound:
+#     """
+#     Creates a new compound document in the database.
 
-    Args:
-        db (AsyncIOMotorClient): MongoDB client instance
-        compound (CompoundCreate): Compound data to be inserted
+#     Args:
+#         db (AsyncIOMotorClient): MongoDB client instance
+#         compound (CompoundCreate): Compound data to be inserted
 
-    Returns:
-        Compound: The created compound document
+#     Returns:
+#         Compound: The created compound document
 
-    Raises:
-        HTTPException: If database operation fails
-    """
-    logging.info(f'Inserting compound {compound.cid} into db...')
+#     Raises:
+#         HTTPException: If database operation fails
+#     """
+#     logging.info(f'Inserting compound {compound.cid} into db...')
+#     try:
+#         await db[DB_COLLECTION].insert_one(dict(compound))
+#         return await db[DB_COLLECTION].find_one({"cid": compound.cid})
+#     except Exception as e:
+#         raise HTTPException(
+#             status_code=500, 
+#             detail=f"Error creating compound: {str(e)}"
+#         )
+
+
+async def create_compound(db: AsyncIOMotorClient, compound: CompoundIn) -> CompoundDB:   
+
     try:
-        await db[DB_COLLECTION].insert_one(dict(compound))
-        return await db[DB_COLLECTION].find_one({"cid": compound.cid})
+        # Convert to dict, excluding None values to keep MongoDB document clean
+        compound_dict = compound.model_dump(exclude_none=True)
+        result = await db[DB_COLLECTION].insert_one(compound_dict)
+        # Retrieve and return the inserted document as CompoundDB
+        inserted_doc = await db[DB_COLLECTION].find_one({"_id": result.inserted_id})
+        return CompoundDB(**inserted_doc)
     except Exception as e:
-        raise HTTPException(
-            status_code=500, 
-            detail=f"Error creating compound: {str(e)}"
-        )
+        logging.error(f"Database error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating compound: {str(e)}") 
 
-async def get_compound(db: AsyncIOMotorClient, cid: int) -> Compound:
+
+async def get_compound(db: AsyncIOMotorClient, cid: int) -> CompoundDB:
     """
     Retrieves a compound document from the database by its CID.
 

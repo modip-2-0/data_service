@@ -1,0 +1,31 @@
+
+services:
+  data_service:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - ../storage:/storage              
+    environment:
+      - STORAGE_PATH=/storage
+    networks:
+      - modip_network
+
+  mongodb:
+    image: mongo:8.2.6
+    ports:
+      - "27017:27017"
+    volumes:
+      - data:/data/db
+    networks:
+      - modip_network
+
+networks:
+  modip_network:
+    driver: bridge
+
+volumes:
+  data:

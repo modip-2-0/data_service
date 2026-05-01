@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 #import uvicron
+from contextlib import asynccontextmanager
 
 from core.db import connect_and_init_db, close_db_connect
 from api.main import api_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await connect_and_init_db()
+    yield
+    await close_db_connect()
 
 
 def create_app() -> FastAPI:
@@ -15,12 +23,9 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Data Service API",
         description="API for managing data from PubChem",
-        version="1.0.0"
+        version="1.0.0",
+        lifespan=lifespan
     )
-    
-    # Register event handlers
-    app.add_event_handler("startup", connect_and_init_db)
-    app.add_event_handler("shutdown", close_db_connect)
     
     # Include API routes
     app.include_router(api_router)

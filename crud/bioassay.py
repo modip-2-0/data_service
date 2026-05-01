@@ -1,11 +1,11 @@
 from fastapi import HTTPException
 import logging
 from core.db import AsyncIOMotorClient
-from models.bioassay import Bioassay, BioassayCreate
+from models.bioassay import BioassayIn, BioassayDB
 
 DB_COLLECTION = "bioassay"
 
-async def create_bioassay(db: AsyncIOMotorClient, bioassay: BioassayCreate) -> Bioassay:
+async def create_bioassay(db: AsyncIOMotorClient, bioassay: BioassayIn) -> BioassayDB:
     """
     Creates a new bioassay document in the database.
 
@@ -28,7 +28,7 @@ async def create_bioassay(db: AsyncIOMotorClient, bioassay: BioassayCreate) -> B
         raise HTTPException(status_code=500, detail="Failed to create bioassay")
 
 
-async def get_bioassay(db: AsyncIOMotorClient, aid: int) -> Bioassay:
+async def get_bioassay(db: AsyncIOMotorClient, aid: int) -> BioassayDB:
     """
     Retrieves a bioassay document by its assay ID (aid).
 

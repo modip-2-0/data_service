@@ -13,19 +13,7 @@ from download_engine.compound import download_compound
 
 
 
-async def download(db: AsyncIOMotorClient, aids: str) -> None:
-    """
-    Downloads bioassays and their associated compounds based on a search query.
-
-    Args:
-        db (AsyncIOMotorClient): MongoDB client instance
-        query (str): Search query for PubChem bioassays
-
-    The function:
-    1. Searches for bioassays matching the query
-    2. Downloads each bioassay if not already in database
-    3. Downloads the compounds associated with each bioassay
-    """
+async def download(db: AsyncIOMotorClient, aids: list[int]) -> None:
    
   
     for aid in aids[:5]:

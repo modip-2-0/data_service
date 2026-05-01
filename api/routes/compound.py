@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from models.compound import CompoundCreate, Compound
+from models.compound import CompoundIn, CompoundDB
 from crud.compound import create_compound, get_compound, delete_compounds
 from api.dependencies import AsyncMongoDB
 
@@ -26,39 +26,15 @@ async def list_compounds(db: AsyncMongoDB) -> list[int]:
         response.append(doc["cid"])
     return response
 
-@router.post("/insert", response_model=Compound)
-async def insert_compound(db: AsyncMongoDB, compound: CompoundCreate) -> Compound:
-    """
-    Create a new compound document in the database.
-    
-    Args:
-        db (AsyncMongoDB): Database connection instance
-        compound (CompoundCreate): Compound data to be inserted
-        
-    Returns:
-        Compound: Created compound document with MongoDB ID
-        
-    Raises:
-        HTTPException: If database operation fails
-    """
+@router.post("/insert", response_model=CompoundDB)
+async def insert_compound(db: AsyncMongoDB, compound: CompoundIn) -> CompoundDB:
+
     return await create_compound(db, compound)
 
 
-@router.get("/get/{cid}", response_model=Compound)
-async def get(db: AsyncMongoDB, cid: int) -> Compound:
-    """
-    Retrieve a compound document by its CID.
-    
-    Args:
-        db (AsyncMongoDB): Database connection instance
-        cid (int): Compound ID to search for
-        
-    Returns:
-        Compound: Compound document if found
-        
-    Raises:
-        HTTPException: If compound is not found
-    """
+@router.get("/get/{cid}", response_model=CompoundDB)
+async def get(db: AsyncMongoDB, cid: int) -> CompoundDB:
+
     return await get_compound(db, cid)
 
 
@@ -76,25 +52,11 @@ async def drop_compounds(db: AsyncMongoDB):
 
 @router.get(
     "/user/{username}",
-    response_model=list[Compound],
+    response_model=list[CompoundDB],
     summary="Get all unique compounds for a user"
 )
 async def get_user_compounds(db: AsyncMongoDB, username: str):
-    """
-    Retrieves all unique compound documents associated with a user's bioassays.
-    
-    Steps:
-    1. Get all bioassays for the user
-    2. Extract unique compound IDs from all bioassays
-    3. Fetch corresponding compound documents
-    
-    Args:
-        db: MongoDB client
-        username: User to filter compounds
-    
-    Returns:
-        List of unique CompoundDB documents
-    """
+  
     try:
         # Paso 1: Obtener ensayos del usuario
         assays = await get_user_assays(db, username)

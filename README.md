@@ -57,21 +57,8 @@ A FastAPI-based service for downloading and managing bioassay and compound data 
 4. Start the Service
 
     ```bash
-    docker compose run --rm api
+    docker compose up data_service
     ```
-5. Use the Client
-    - Once the services are up and running, the client will automatically start and display a prompt.
-    - Available commands:
-        - `query <query_text>`: Download data with the specified query.
-        - `list bioassays`: List all bioassay IDs.
-        - `list compounds`: List all compound IDs.
-        - `bioassay <aid>`: Get a specific bioassay by its ID.
-        - `compound <cid>`: Get a specific compound by its ID.
-        - `drop bioassays`: Drop all bioassays.
-        - `drop compounds`: Drop all compounds.
-        - `drop db`:  Drop the entire database.
-        - `help`: Display the list of available commands.
-        - `exit`: Exit the client.
         
 6. Stop the Service
    - Press `Ctrl`+`C` in your terminal to stop the running containers.
