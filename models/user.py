@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from models.mongo import MongoModel, PyObjectId
 
 class UserIn(BaseModel):

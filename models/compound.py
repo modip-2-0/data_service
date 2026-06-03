@@ -11,7 +11,8 @@ class CompoundIn(BaseModel):
     The API will automatically assign a local file path (if files are uploaded/created)
     and will never request a PubChem CID (that is reserved for downloads).
     """
-
+    cid: Optional[int] = None   
+    path: Optional[str] = None  
     # Basic info
     iupac_name: Optional[str] = Field(None, description="Preferred IUPAC name")
     coordinate_type: Optional[str] = Field(None, description="2D or 3D coordinate type")

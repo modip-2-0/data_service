@@ -7,29 +7,6 @@ import logging
 # Constants should be at module level
 DB_COLLECTION = "compound"
 
-# async def create_compound(db: AsyncIOMotorClient, compound: CompoundCreate) -> Compound:
-#     """
-#     Creates a new compound document in the database.
-
-#     Args:
-#         db (AsyncIOMotorClient): MongoDB client instance
-#         compound (CompoundCreate): Compound data to be inserted
-
-#     Returns:
-#         Compound: The created compound document
-
-#     Raises:
-#         HTTPException: If database operation fails
-#     """
-#     logging.info(f'Inserting compound {compound.cid} into db...')
-#     try:
-#         await db[DB_COLLECTION].insert_one(dict(compound))
-#         return await db[DB_COLLECTION].find_one({"cid": compound.cid})
-#     except Exception as e:
-#         raise HTTPException(
-#             status_code=500, 
-#             detail=f"Error creating compound: {str(e)}"
-#         )
 
 
 async def create_compound(db: AsyncIOMotorClient, compound: CompoundIn) -> CompoundDB:   

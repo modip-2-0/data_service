@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-#import uvicron
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from core.db import connect_and_init_db, close_db_connect
@@ -34,3 +34,10 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],   # Origen del frontend
+    allow_credentials=True,
+    allow_methods=["*"],                      # Permitir todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],                      # Permitir todos los headers
+)
